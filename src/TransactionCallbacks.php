@@ -252,12 +252,21 @@ class TransactionCallbacks
         $merchantRequestID=$callbackData->Body->stkCallback->MerchantRequestID;
         $checkoutRequestID=$callbackData->Body->stkCallback->CheckoutRequestID;
 
-        $amount=$callbackData->stkCallback->Body->CallbackMetadata->Item[0]->Value;
+        $amount=$callbackData->Body->stkCallback->CallbackMetadata->Item[0]->Value;
         $mpesaReceiptNumber=$callbackData->Body->stkCallback->CallbackMetadata->Item[1]->Value;
-        $balance=$callbackData->stkCallback->Body->CallbackMetadata->Item[2]->Value;
-        $b2CUtilityAccountAvailableFunds=$callbackData->Body->stkCallback->CallbackMetadata->Item[3]->Value;
-        $transactionDate=$callbackData->Body->stkCallback->CallbackMetadata->Item[4]->Value;
-        $phoneNumber=$callbackData->Body->stkCallback->CallbackMetadata->Item[5]->Value;
+        
+        if($callbackData->Body->stkCallback->CallbackMetadata->Item[2]->Name == "Balance") {
+            $balance=$callbackData->Body->stkCallback->CallbackMetadata->Item[2]->Value ?? 0;
+            $b2CUtilityAccountAvailableFunds=$callbackData->Body->stkCallback->CallbackMetadata->Item[2]->Value ?? 0;
+            $transactionDate=$callbackData->Body->stkCallback->CallbackMetadata->Item[3]->Value;
+            $phoneNumber=$callbackData->Body->stkCallback->CallbackMetadata->Item[4]->Value;
+        }
+        else {
+            $balance=0;
+            $b2CUtilityAccountAvailableFunds=0;
+            $transactionDate=$callbackData->Body->stkCallback->CallbackMetadata->Item[2]->Value;
+            $phoneNumber=$callbackData->Body->stkCallback->CallbackMetadata->Item[3]->Value;
+        }
 
         $result=[
             "resultDesc"=>$resultDesc,
